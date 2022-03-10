@@ -10,9 +10,14 @@ export interface SandboxOptions {
     timeout?: number
 }
 
-export type ParsingMethodOption = string | RegExp | ((line: string) => Optional<string[]>);
-
+/**
+ * @callback ParsingMethod
+ * @param  {string} line        - Line to parse
+ * @return {string[]|undefined} - Array of identifiers or expression strings
+ */
 export type ParsingMethod = (line: string) => Optional<string[]>;
+
+export type ParsingMethodOption = string | RegExp | ParsingMethod;
 
 export interface ConditionalJSLoaderOptions {
     /**
@@ -20,7 +25,7 @@ export interface ConditionalJSLoaderOptions {
      */
     parser: {
         /**
-         * Regex or function to detect if file has any conditionals to skip unnecessary parsing. No capture/return groups required.
+         * Regex to detect if file has any conditionals to skip unnecessary parsing. No capture/return groups required.
          */
         file_detect: string | RegExp;
         /**
@@ -78,50 +83,50 @@ export interface ConditionalJSLoaderOptions {
 
 export interface ParserOptions {
     /**
-     * Regex to detect if file has any conditionals to skip unnecessary parsing. No capture groups required.
+     * Regex to detect if file has any conditionals to skip unnecessary parsing.
      */
     file_detect: RegExp;
     /**
-     * Regex to detect and parse #define. Must capture a single identifier; additionally capture optional assignment expression.
+     * Function to detect and parse #define. Must return a single identifier; additionally return optional assignment expression.
      */
     define: ParsingMethod;
     /**
-     * Regex to detect and parse #if. Must have 1 capture group.
+     * Function to detect and parse #if. Must return single string expression.
      */
     if: ParsingMethod;
     /**
-     * Regex to detect and parse #ifdef. Must capture a single identifier.
+     * Function to detect and parse #ifdef. Must return single string expression.
      */
     ifdef: ParsingMethod;
     /**
-     * Regex to detect and parse #ifndef. Must capture a single identifier.
+     * Function to detect and parse #ifndef. Must return single identifier.
      */
     ifndef: ParsingMethod;
     /**
-     * Regex to detect and parse #elif. Must have 1 capture group.
+     * Function to detect and parse #elif. Must return single identifier.
      */
     elif: ParsingMethod;
     /**
-     * Regex to detect and parse #else. No capture groups required.
+     * Function to detect and parse #else. Must return single string expression.
      */
     else: ParsingMethod;
     /**
-     * Regex to detect and parse #elifdef. Must capture a single identifier.
+     * Function to detect and parse #elifdef. Must return single string expression.
      */
     elifdef: ParsingMethod;
     /**
-     * Regex to detect and parse #elifndef. Must capture a single identifier.
+     * Regex to detect and parse #elifndef. Must return a single identifier.
      */
     elifndef: ParsingMethod;
     /**
-     * Regex to detect and parse #endif. No capture groups required.
+     * Regex to detect and parse #endif.
      */
     endif: ParsingMethod;
 }
 
 export interface ConditionalJSLoaderNormalizedOptions {
     /**
-     * Regular expressions used to parse conditional comment lines.
+     * Functions used to parse conditional comment lines.
      */
     parser: ParserOptions;
     /**
