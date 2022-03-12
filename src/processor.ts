@@ -1,5 +1,5 @@
 import {RawSourceMap} from 'source-map';
-import {ConditionalJSLoaderNormalizedOptions, ConditionalJSLoaderOptions, normalizeOptions} from './options';
+import {ConditionalJSLoaderNormalizedOptions, ConditionalJSLoaderOptions, normalizeOptions, ProcessActions} from './options';
 import {Optional} from './utils';
 import {parse, ParseResult} from '@babel/parser';
 import MagicString from 'magic-string';
@@ -122,7 +122,15 @@ export class ConditionalJsProcessor {
 
         for (const block of blocks.inactive_blocks) {
             if (block.end) {
-                s.remove(block.start.end, block.end.start);
+                if (this.options.action === ProcessActions.remove) {
+                    s.remove(block.start.end, block.end.start);
+                } else if (this.options.action === ProcessActions.comment) {
+                    for (const node of ast.program.body) {
+                        if (node.start && node.end && node.start >= block.start.end && node.end <= block.end.start) {
+                            s.overwrite(node.start, node.end, `/* ${s.original.slice(node.start, node.end)} */`);
+                        }
+                    }
+                }
             }
         }
 
