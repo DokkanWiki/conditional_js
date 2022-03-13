@@ -1,5 +1,14 @@
 import {ConditionalJSLoaderOptions, ProcessActions} from './options';
 
+/**
+ * TODO: Different presets of parsing regex/functions.
+ *  - @
+ *  - #
+ *  - etc
+ *
+ *  TODO: Modify parentheses versions to allow multiline expressions
+ */
+
 const DEFAULT_DETECT_FILE_REGEX = /^[^\S\r\n]*(?:\/\/|\/\*)[^\S\r\n]*@endif[^\S\r\n]*(?:\*\/)?$/mui;
 const DEFAULT_DEFINE_REGEX = /^@define[^\S\r\n]+(\w+)(?:[^\S\r\n]+(.+))?$|^@define\(([^,]+)(?:,(.+))?\)$/mui;
 const DEFAULT_IF_REGEX = /^@if\((.+)\)$|^@if[^\S\r\n]+(.+?)$/mui;

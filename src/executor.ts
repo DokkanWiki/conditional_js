@@ -29,6 +29,15 @@ export class EvalExecutor implements Executor {
         this.defines.set(key, val);
     }
 
+    /**
+     * TODO: Pass definitions as named arguments instead of defining them in scope
+     *
+     * @param {string} code
+     * @param {string} source_filename
+     * @param {number} source_line
+     * @param {number} source_column
+     * @returns {Promise<any>}
+     */
     public async exec(code: string, source_filename?: string, source_line?: number, source_column?: number): Promise<any> {
         const lines = ['"use strict";'];
         for (const [key, val] of this.defines.entries()) {

@@ -9,6 +9,12 @@ const getOptions = (sandbox: boolean | SandboxOptions) => {
     return options;
 };
 
+/**
+ * TODO: Add tests for multiline comment conditionals
+ *
+ * TODO: Add tests for comment-out removal option
+ */
+
 describe.each([DEFAULT_OPTIONS.sandbox, false])(`test processor (sandbox: %s)`, (sandbox_options) => {
     const file_context = {
         file_name: 'test.js',

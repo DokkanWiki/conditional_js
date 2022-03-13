@@ -8,6 +8,7 @@ import {DEFAULT_OPTIONS} from './defaults';
 export const ConditionalJsLoader: LoaderDefinitionFunction<ConditionalJSLoaderOptions> = function (content, map, meta) {
     const loader_context = this;
 
+    // TODO: Options schema
     const options = Object.assign({}, DEFAULT_OPTIONS, loader_context.getOptions());
 
     const callback = loader_context.async();
