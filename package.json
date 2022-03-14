@@ -1,7 +1,7 @@
 {
-    "name": "conditional_js_loader",
+    "name": "conditional_js",
     "version": "1.0.0",
-    "description": "C++ style conditional JavaScript Webpack loader",
+    "description": "C++ style preprocessing conditionals for JavaScript and Webpack",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "files": [
@@ -22,10 +22,13 @@
         "c++",
         "cpp"
     ],
+    "repository": {
+        "url": "github:DokkanWiki/conditional-js"
+    },
     "author": "DokkanWiki <contact@dokkan.wiki>",
-    "license": "UNLICENSED",
-    "peerDependencies": {
-        "webpack": "^5.0.0-0"
+    "license": "MIT",
+    "engines": {
+        "node": ">=12"
     },
     "devDependencies": {
         "@babel/types": "^7.17.0",
@@ -35,16 +38,29 @@
         "@ungap/structured-clone": "^0.3.4",
         "jest": "^27.5.1",
         "ts-jest": "^27.1.3",
-        "typescript": "^4.6.2"
-    },
-    "optionalDependencies": {
+        "typescript": "^4.6.2",
+        "webpack": "^5.70.0",
         "isolated-vm": "^4.3.6",
         "source-map": "^0.7.3"
     },
+    "peerDependencies": {
+        "webpack": "^5.0.0",
+        "isolated-vm": "^4.3.6",
+        "source-map": "^0.7.3"
+    },
+    "peerDependenciesMeta": {
+        "webpack": {
+            "optional": true
+        },
+        "isolated-vm": {
+            "optional": true
+        },
+        "source-map": {
+            "optional": true
+        }
+    },
     "dependencies": {
         "@babel/parser": "^7.17.8",
-        "magic-string": "^0.26.1",
-        "schema-utils": "^4.0.0",
-        "webpack": "^5.70.0"
+        "magic-string": "^0.26.1"
     }
 }
