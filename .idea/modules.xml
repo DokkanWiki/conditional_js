@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/conditional_js_loader.iml" filepath="$PROJECT_DIR$/.idea/conditional_js_loader.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/conditional_js.iml" filepath="$PROJECT_DIR$/.idea/conditional_js.iml" />
     </modules>
   </component>
 </project>
