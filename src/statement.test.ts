@@ -1,12 +1,12 @@
 import {DEFAULT_OPTIONS} from './defaults';
-import {normalizeOptions, SandboxOptions} from './options';
+import {normalizeOptions, ISandboxOptions} from './options';
 import {IsolatedVmExecutor} from './executor';
 import {StatementParser} from './statement_parser';
 import {StatementLocation} from './statement';
 
 const default_options = normalizeOptions(DEFAULT_OPTIONS);
 
-const executor = new IsolatedVmExecutor([], default_options.sandbox as SandboxOptions);
+const executor = new IsolatedVmExecutor([], default_options.sandbox as ISandboxOptions);
 
 test('execute define default', async () => {
     await executor.newContext();

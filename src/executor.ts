@@ -1,4 +1,4 @@
-import {SandboxOptions} from './options';
+import {ISandboxOptions} from './options';
 import {Context, Isolate} from 'isolated-vm';
 
 export abstract class Executor {
@@ -61,11 +61,11 @@ export class EvalExecutor implements Executor {
 
 export class IsolatedVmExecutor implements Executor {
     private readonly default_defines: Map<string, any>;
-    private options: SandboxOptions;
+    private options: ISandboxOptions;
     private vm: Isolate;
     private vm_context: Context;
 
-    constructor(default_defines: Iterable<[string, any]> = [], options: SandboxOptions) {
+    constructor(default_defines: Iterable<[string, any]> = [], options: ISandboxOptions) {
         const {Isolate} = require('isolated-vm');
         this.default_defines = new Map(default_defines);
         this.options = options;

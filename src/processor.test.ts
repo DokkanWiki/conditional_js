@@ -1,18 +1,17 @@
 import {DEFAULT_OPTIONS} from './defaults';
-import {SandboxOptions} from './options';
+import {ISandboxOptions, ProcessAction} from './options';
 import {ConditionalJsProcessor} from './processor';
 import {structuredClone} from './utils';
 
-const getOptions = (sandbox: boolean | SandboxOptions) => {
+const getOptions = (sandbox: boolean | ISandboxOptions, action: ProcessAction = ProcessAction.remove) => {
     const options = structuredClone(DEFAULT_OPTIONS);
     options.sandbox = sandbox;
+    options.action = action;
     return options;
 };
 
 /**
  * TODO: Add tests for multiline comment conditionals
- *
- * TODO: Add tests for comment-out removal option
  */
 
 describe.each([DEFAULT_OPTIONS.sandbox, false])(`test processor (sandbox: %s)`, (sandbox_options) => {
@@ -27,6 +26,17 @@ describe.each([DEFAULT_OPTIONS.sandbox, false])(`test processor (sandbox: %s)`, 
             );
             const {transformed_source} = await processor.process(source_test);
             expect(transformed_source).toBe(source_test_results[i]);
+            processor.release();
+        });
+    }
+    for (let i = 0; i < 3; i++) {
+        test(`successful parse test #${i}, comment out`, async () => {
+            const source_test = source_test_template.replace(/%d/g, `${i}`);
+            const processor = new ConditionalJsProcessor(
+                getOptions(sandbox_options, ProcessAction.comment),
+            );
+            const {transformed_source} = await processor.process(source_test);
+            expect(transformed_source).toBe(source_test_results_comment[i]);
             processor.release();
         });
     }
@@ -83,10 +93,9 @@ describe.each([DEFAULT_OPTIONS.sandbox, false])(`test processor (sandbox: %s)`, 
             "if";
         `;
         const options = getOptions(sandbox_options);
+        // @ts-ignore
         options.parser.file_detect = /if/g;
-        const processor = new ConditionalJsProcessor(
-            options,
-        );
+        const processor = new ConditionalJsProcessor(options);
         const {transformed_source} = await processor.process(source_test, file_context);
         expect(transformed_source).toBe(source_test);
         processor.release();
@@ -118,7 +127,7 @@ console.log({a, b});
 `;
 
 const source_test_results = [
-`
+    `
 // Standard comment
 
 
@@ -128,7 +137,7 @@ const b = 3;
 
 console.log({a, b});
 `,
-`
+    `
 // Standard comment
 
 
@@ -138,7 +147,7 @@ const b = 1;
 
 console.log({a, b});
 `,
-`
+    `
 // Standard comment
 
 
@@ -147,5 +156,50 @@ const a = 2 + 1;
 const b = 2;
 
 console.log({a, b});
-`
-]
+`,
+];
+
+const source_test_results_comment = [
+    `
+// Standard comment
+
+
+const a = 0 + 1;
+/* const a = 0 + 2; */
+/* const a = 0 + 3; */
+
+/* const b = 1; */
+/* const b = 2; */
+const b = 3;
+
+console.log({a, b});
+`,
+    `
+// Standard comment
+
+
+const a = 1 + 1;
+/* const a = 1 + 2; */
+/* const a = 1 + 3; */
+
+const b = 1;
+/* const b = 2; */
+/* const b = 3; */
+
+console.log({a, b});
+`,
+    `
+// Standard comment
+
+
+const a = 2 + 1;
+/* const a = 2 + 2; */
+/* const a = 2 + 3; */
+
+/* const b = 1; */
+const b = 2;
+/* const b = 3; */
+
+console.log({a, b});
+`,
+];

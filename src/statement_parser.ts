@@ -1,11 +1,11 @@
-import {ParserOptions} from './options';
+import {INormalizedParseOptions} from './options';
 import {Optional} from './utils';
 import {Statement, StatementLocation, StatementType} from './statement';
 
 export class StatementParser {
-    private parser_options: ParserOptions;
+    private parser_options: INormalizedParseOptions;
 
-    constructor(options: ParserOptions) {
+    constructor(options: INormalizedParseOptions) {
         this.parser_options = options;
     }
 

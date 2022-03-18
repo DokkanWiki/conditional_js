@@ -1,5 +1,5 @@
 import {RawSourceMap} from 'source-map';
-import {ConditionalJSLoaderNormalizedOptions, ConditionalJSLoaderOptions, normalizeOptions, ProcessActions} from './options';
+import {INormalizedConditionalJSLoaderOptions, IConditionalJSLoaderOptions, normalizeOptions, ProcessAction} from './options';
 import {Optional} from './utils';
 import {parse, ParseResult} from '@babel/parser';
 import MagicString from 'magic-string';
@@ -20,11 +20,11 @@ export interface IFileContext {
 }
 
 export class ConditionalJsProcessor {
-    private options: ConditionalJSLoaderNormalizedOptions;
+    private options: INormalizedConditionalJSLoaderOptions;
     private readonly executor: Executor;
     private statement_parser: StatementParser;
 
-    constructor(options: ConditionalJSLoaderOptions) {
+    constructor(options: IConditionalJSLoaderOptions) {
         this.options = normalizeOptions(options);
         if (typeof this.options.sandbox === 'undefined') {
             this.executor = new EvalExecutor(Object.entries(this.options.defines));
@@ -126,9 +126,9 @@ export class ConditionalJsProcessor {
 
         for (const block of blocks.inactive_blocks) {
             if (block.end) {
-                if (this.options.action === ProcessActions.remove) {
+                if (this.options.action === ProcessAction.remove) {
                     s.remove(block.start.end, block.end.start);
-                } else if (this.options.action === ProcessActions.comment) {
+                } else if (this.options.action === ProcessAction.comment) {
                     for (const node of ast.program.body) {
                         if (node.start && node.end && node.start >= block.start.end && node.end <= block.end.start) {
                             s.overwrite(node.start, node.end, `/* ${s.original.slice(node.start, node.end)} */`);

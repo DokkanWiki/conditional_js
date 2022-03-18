@@ -1,11 +1,11 @@
 import {LoaderDefinitionFunction} from 'webpack';
-import {ConditionalJSLoaderOptions} from './options';
+import {IConditionalJSLoaderOptions} from './options';
 import {ConditionalJsProcessor, IFileContext} from './processor';
 import {RawSourceMap} from 'source-map';
 import {Optional} from './utils';
 import {DEFAULT_OPTIONS} from './defaults';
 
-export const ConditionalJsLoader: LoaderDefinitionFunction<ConditionalJSLoaderOptions> = function (content, map, meta) {
+export const ConditionalJsLoader: LoaderDefinitionFunction<IConditionalJSLoaderOptions> = function (content, map, meta) {
     const loader_context = this;
 
     // TODO: Options schema

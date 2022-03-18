@@ -1,4 +1,4 @@
-import {DEFAULT_OPTIONS} from './defaults';
+import {DEFAULT_OPTIONS, ParseFlavor} from './defaults';
 import {normalizeOptions} from './options';
 import {structuredClone} from './utils';
 
@@ -11,6 +11,7 @@ test('default option normalize', () => {
 
 test('option function normalize', () => {
     const options = getOptions();
+    // @ts-ignore
     options.parser.if = (s: string) => s.split('');
     const default_options = normalizeOptions(options);
     expect(typeof default_options.parser.define === 'function').toBe(true);
@@ -20,7 +21,9 @@ test('option function normalize', () => {
 
 test('option string normalize', () => {
     const options = getOptions();
+    // @ts-ignore
     options.parser.file_detect = 'test';
+    // @ts-ignore
     options.parser.if = 'test';
     const default_options = normalizeOptions(options);
     expect(default_options.parser.file_detect).toBeInstanceOf(RegExp);
@@ -67,4 +70,14 @@ test('testing boolean true sandbox', () => {
         memory_limit: 128,
         timeout: 10000,
     });
+});
+
+test('Test flavor parsing', () => {
+    const options = getOptions();
+    options.parser = ParseFlavor.at;
+    let default_options = normalizeOptions(options);
+    expect(default_options.parser.if('@if test')).toStrictEqual(['@if test', 'test']);
+    options.parser = ParseFlavor.hash;
+    default_options = normalizeOptions(options);
+    expect(default_options.parser.if('#if test')).toStrictEqual(['#if test', 'test']);
 });

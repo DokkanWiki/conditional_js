@@ -1,7 +1,7 @@
 import {Optional} from './utils';
-import {DEEFAULT_MAKE_REGEX_PARSER_FN} from './defaults';
+import {ParseFlavor, PARSE_FLAVORS} from './defaults';
 
-export enum ProcessActions {
+export enum ProcessAction {
     remove = 'remove', comment = 'comment'
 }
 
@@ -9,70 +9,74 @@ export enum ProcessActions {
  * TODO: Maybe SandBoxOptions should also accept a Function instead to allow replacing with a custom eval
  * TODO: Maybe support a few popular eval-alternatives like Safe-Eval out of the box
  */
-export interface SandboxOptions {
+export interface ISandboxOptions {
     memory_limit?: number,
     timeout?: number
 }
 
 /**
- * @callback ParsingMethod
+ * @callback TParseMethod
  * @param  {string} line        - Line to parse
  * @return {string[]|undefined} - Array of identifiers or expression strings
  */
-export type ParsingMethod = (line: string) => Optional<string[]>;
+export type TParseMethod = (line: string) => Optional<string[]>;
 
-export type ParsingMethodOption = string | RegExp | ParsingMethod;
+export type TParseMethodOption = string | RegExp | TParseMethod;
 
-export interface ConditionalJSLoaderOptions {
+export interface IParseOptions {
     /**
-     * Regular expressions used to parse conditional comment lines.
+     * Regex to detect if file has any conditionals to skip unnecessary parsing. No capture/return groups required.
      */
-    parser: {
-        /**
-         * Regex to detect if file has any conditionals to skip unnecessary parsing. No capture/return groups required.
-         */
-        file_detect: string | RegExp;
-        /**
-         * Regex or function to detect and parse #define. Must capture/return a single identifier; additionally capture/return optional assignment expression.
-         */
-        define: ParsingMethodOption;
-        /**
-         * Regex or function to detect and parse #if. Must have 1 capture capture/return.
-         */
-        if: ParsingMethodOption;
-        /**
-         * Regex or function to detect and parse #ifdef. Must captucapture/returnre a single identifier.
-         */
-        ifdef: ParsingMethodOption;
-        /**
-         * Regex or function to detect and parse #ifndef. Must capture/return a single identifier.
-         */
-        ifndef: ParsingMethodOption;
-        /**
-         * Regex or function to detect and parse #elif. Must have 1 capture/return group.
-         */
-        elif: ParsingMethodOption;
-        /**
-         * Regex or function to detect and parse #else. No capture/return groups required.
-         */
-        else: ParsingMethodOption;
-        /**
-         * Regex or function to detect and parse #elifdef. Must capture/return a single identifier.
-         */
-        elifdef: ParsingMethodOption;
-        /**
-         * Regex or function to detect and parse #elifndef. Must capture/return a single identifier.
-         */
-        elifndef: ParsingMethodOption;
-        /**
-         * Regex or function to detect and parse #endif. No capture/return groups required.
-         */
-        endif: ParsingMethodOption;
-    };
+    file_detect: string | RegExp;
+    /**
+     * Regex or function to detect and parse #define. Must capture/return a single identifier; additionally capture/return optional assignment expression.
+     */
+    define: TParseMethodOption;
+    /**
+     * Regex or function to detect and parse #if. Must have 1 capture capture/return.
+     */
+    if: TParseMethodOption;
+    /**
+     * Regex or function to detect and parse #ifdef. Must captucapture/returnre a single identifier.
+     */
+    ifdef: TParseMethodOption;
+    /**
+     * Regex or function to detect and parse #ifndef. Must capture/return a single identifier.
+     */
+    ifndef: TParseMethodOption;
+    /**
+     * Regex or function to detect and parse #elif. Must have 1 capture/return group.
+     */
+    elif: TParseMethodOption;
+    /**
+     * Regex or function to detect and parse #else. No capture/return groups required.
+     */
+    else: TParseMethodOption;
+    /**
+     * Regex or function to detect and parse #elifdef. Must capture/return a single identifier.
+     */
+    elifdef: TParseMethodOption;
+    /**
+     * Regex or function to detect and parse #elifndef. Must capture/return a single identifier.
+     */
+    elifndef: TParseMethodOption;
+    /**
+     * Regex or function to detect and parse #endif. No capture/return groups required.
+     */
+    endif: TParseMethodOption;
+}
+
+export interface IConditionalJSLoaderOptions {
+    /**
+     * Regular expressions used to parse conditional comment lines. Alternatively supply a key string for a set of default options.
+     *
+     * Current supported defaults are
+     */
+    parser: IParseOptions | ParseFlavor;
     /**
      * Action to perform on blocks removed by the conditional pre-processing.
      */
-    action: ProcessActions;
+    action: ProcessAction;
     /**
      * Global definitions used to execute conditional statements.
      */
@@ -82,10 +86,10 @@ export interface ConditionalJSLoaderOptions {
     /**
      * Execute conditional code expressions in `isolate-vm`.
      */
-    sandbox: boolean | SandboxOptions;
+    sandbox: boolean | ISandboxOptions;
 }
 
-export interface ParserOptions {
+export interface INormalizedParseOptions {
     /**
      * Regex to detect if file has any conditionals to skip unnecessary parsing.
      */
@@ -93,50 +97,50 @@ export interface ParserOptions {
     /**
      * Function to detect and parse #define. Must return a single identifier; additionally return optional assignment expression.
      */
-    define: ParsingMethod;
+    define: TParseMethod;
     /**
      * Function to detect and parse #if. Must return single string expression.
      */
-    if: ParsingMethod;
+    if: TParseMethod;
     /**
      * Function to detect and parse #ifdef. Must return single string expression.
      */
-    ifdef: ParsingMethod;
+    ifdef: TParseMethod;
     /**
      * Function to detect and parse #ifndef. Must return single identifier.
      */
-    ifndef: ParsingMethod;
+    ifndef: TParseMethod;
     /**
      * Function to detect and parse #elif. Must return single identifier.
      */
-    elif: ParsingMethod;
+    elif: TParseMethod;
     /**
      * Function to detect and parse #else. Must return single string expression.
      */
-    else: ParsingMethod;
+    else: TParseMethod;
     /**
      * Function to detect and parse #elifdef. Must return single string expression.
      */
-    elifdef: ParsingMethod;
+    elifdef: TParseMethod;
     /**
      * Regex to detect and parse #elifndef. Must return a single identifier.
      */
-    elifndef: ParsingMethod;
+    elifndef: TParseMethod;
     /**
      * Regex to detect and parse #endif.
      */
-    endif: ParsingMethod;
+    endif: TParseMethod;
 }
 
-export interface ConditionalJSLoaderNormalizedOptions {
+export interface INormalizedConditionalJSLoaderOptions {
     /**
      * Functions used to parse conditional comment lines.
      */
-    parser: ParserOptions;
+    parser: INormalizedParseOptions;
     /**
      * Action to perform on blocks removed by the conditional pre-processing.
      */
-    action: ProcessActions;
+    action: ProcessAction;
     /**
      * Global definitions used to execute conditional statements.
      */
@@ -146,25 +150,35 @@ export interface ConditionalJSLoaderNormalizedOptions {
     /**
      * Execute conditional code expressions in `isolate-vm`.
      */
-    sandbox: Optional<SandboxOptions>;
+    sandbox: Optional<ISandboxOptions>;
 }
 
-export function normalizeOptions(options: ConditionalJSLoaderOptions): ConditionalJSLoaderNormalizedOptions {
+const makeRegexParseFn = (re: RegExp) => {
+    return function (s: string) {
+        const matches = re.exec(s);
+        if (matches === null) {
+            return undefined;
+        }
+        return matches.filter(Boolean);
+    };
+};
 
-    const makeParserOption = (opt: ParsingMethodOption): ParsingMethod => {
+export function normalizeOptions(options: IConditionalJSLoaderOptions): INormalizedConditionalJSLoaderOptions {
+
+    const makeParserOption = (opt: TParseMethodOption): TParseMethod => {
         if (typeof opt === 'string') {
-            return DEEFAULT_MAKE_REGEX_PARSER_FN(
+            return makeRegexParseFn(
                 new RegExp(opt, 'mui'),
             );
         } else if (opt instanceof RegExp) {
-            return DEEFAULT_MAKE_REGEX_PARSER_FN(opt);
+            return makeRegexParseFn(opt);
         } else if (typeof opt === 'function') {
             return opt;
         }
         throw new Error(`Invalid parsing option: expected string, RegExp, or function`);
     };
 
-    let sandbox_options: Optional<SandboxOptions> = {
+    let sandbox_options: Optional<ISandboxOptions> = {
         memory_limit: 128,
         timeout: 10000,
     };
@@ -178,18 +192,20 @@ export function normalizeOptions(options: ConditionalJSLoaderOptions): Condition
         sandbox_options.timeout = options.sandbox.timeout;
     }
 
+    const parser_options = typeof options.parser === 'string' ? PARSE_FLAVORS[options.parser] : options.parser;
+
     return {
         parser: {
-            file_detect: typeof options.parser.file_detect === 'string' ? new RegExp(options.parser.file_detect) : options.parser.file_detect,
-            define: makeParserOption(options.parser.define),
-            if: makeParserOption(options.parser.if),
-            ifdef: makeParserOption(options.parser.ifdef),
-            ifndef: makeParserOption(options.parser.ifndef),
-            else: makeParserOption(options.parser.else),
-            elif: makeParserOption(options.parser.elif),
-            elifdef: makeParserOption(options.parser.elifdef),
-            elifndef: makeParserOption(options.parser.elifndef),
-            endif: makeParserOption(options.parser.endif),
+            file_detect: typeof parser_options.file_detect === 'string' ? new RegExp(parser_options.file_detect) : parser_options.file_detect,
+            define: makeParserOption(parser_options.define),
+            if: makeParserOption(parser_options.if),
+            ifdef: makeParserOption(parser_options.ifdef),
+            ifndef: makeParserOption(parser_options.ifndef),
+            else: makeParserOption(parser_options.else),
+            elif: makeParserOption(parser_options.elif),
+            elifdef: makeParserOption(parser_options.elifdef),
+            elifndef: makeParserOption(parser_options.elifndef),
+            endif: makeParserOption(parser_options.endif),
         },
         action: options.action,
         defines: options.defines ?? {},
