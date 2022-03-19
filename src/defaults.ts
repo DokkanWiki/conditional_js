@@ -8,32 +8,25 @@ export enum ParseFlavor {
     at = '@', hash = '#'
 }
 
-export const PARSE_FLAVORS = {
-    [ParseFlavor.at]: {
-        file_detect: /^[^\S\r\n]*(?:\/\/|\/\*)[^\S\r\n]*@endif[^\S\r\n]*(?:\*\/)?$/mui,
-        define: /^@define[^\S\r\n]+(\w+)(?:[^\S\r\n]+(.+))?$|^@define\(([^,]+)(?:,(.+))?\)$/mui,
-        if: /^@if\((.+)\)$|^@if[^\S\r\n]+(.+?)$/mui,
-        else: /^@else$/mui,
-        elif: /^@elif\((.+)\)$|^@elif[^\S\r\n]+(.+?)$/mui,
-        ifdef: /^@ifdef\([^\S\r\n]*(\w+)[^\S\r\n]*\)$|^@ifdef[^\S\r\n]+(\w+?)$/mui,
-        ifndef: /^@ifndef\([^\S\r\n]*(\w+)[^\S\r\n]*\)$|^@ifndef[^\S\r\n]+(\w+?)$/mui,
-        elifdef: /^@elifdef\([^\S\r\n]*(\w+)[^\S\r\n]*\)$|^@elifdef[^\S\r\n]+(\w+?)$/mui,
-        elifndef: /^@elifndef\([^\S\r\n]*(\w+)[^\S\r\n]*\)$|^@elifndef[^\S\r\n]+(\w+?)$/mui,
-        endif: /^@endif$/mui,
-    },
-    [ParseFlavor.hash]: {
-        file_detect: /^[^\S\r\n]*(?:\/\/|\/\*)[^\S\r\n]*#endif[^\S\r\n]*(?:\*\/)?$/mui,
-        define: /^#define[^\S\r\n]+(\w+)(?:[^\S\r\n]+(.+))?$|^#define\(([^,]+)(?:,(.+))?\)$/mui,
-        if: /^#if\((.+)\)$|^#if[^\S\r\n]+(.+?)$/mui,
-        else: /^#else$/mui,
-        elif: /^#elif\((.+)\)$|^#elif[^\S\r\n]+(.+?)$/mui,
-        ifdef: /^#ifdef\([^\S\r\n]*(\w+)[^\S\r\n]*\)$|^#ifdef[^\S\r\n]+(\w+?)$/mui,
-        ifndef: /^#ifndef\([^\S\r\n]*(\w+)[^\S\r\n]*\)$|^#ifndef[^\S\r\n]+(\w+?)$/mui,
-        elifdef: /^#elifdef\([^\S\r\n]*(\w+)[^\S\r\n]*\)$|^#elifdef[^\S\r\n]+(\w+?)$/mui,
-        elifndef: /^#elifndef\([^\S\r\n]*(\w+)[^\S\r\n]*\)$|^#elifndef[^\S\r\n]+(\w+?)$/mui,
-        endif: /^#endif$/mui,
-    },
-};
+const PARSE_FLAVORS = Object.fromEntries(Object.values(ParseFlavor).map(v => {
+    const mr = (r: string) => new RegExp(r.replace(/@/g, v), 'mui');
+    return [
+        v, {
+            file_detect: mr(String.raw`^[^\S\r\n]*(?:\/\/|\/\*)[^\S\r\n]*@endif[^\S\r\n]*(?:\*\/)?$`),
+            define: mr(String.raw`^@define[^\S\r\n]+(\w+)(?:[^\S\r\n]+(.+))?$|^@define\(([^,]+)(?:,(.+))?\)$`),
+            if: mr(String.raw`^@if\((.+)\)$|^@if[^\S\r\n]+(.+?)$`),
+            else: mr(String.raw`^@else$`),
+            elif: mr(String.raw`^@elif\((.+)\)$|^@elif[^\S\r\n]+(.+?)$`),
+            ifdef: mr(String.raw`^@ifdef\([^\S\r\n]*(\w+)[^\S\r\n]*\)$|^@ifdef[^\S\r\n]+(\w+?)$`),
+            ifndef: mr(String.raw`^@ifndef\([^\S\r\n]*(\w+)[^\S\r\n]*\)$|^@ifndef[^\S\r\n]+(\w+?)$`),
+            elifdef: mr(String.raw`^@elifdef\([^\S\r\n]*(\w+)[^\S\r\n]*\)$|^@elifdef[^\S\r\n]+(\w+?)$`),
+            elifndef: mr(String.raw`^@elifndef\([^\S\r\n]*(\w+)[^\S\r\n]*\)$|^@elifndef[^\S\r\n]+(\w+?)$`),
+            endif: mr(String.raw`^@endif$`),
+        },
+    ];
+}));
+
+export {PARSE_FLAVORS};
 
 export const DEFAULT_OPTIONS: IConditionalJSLoaderOptions = {
     parser: PARSE_FLAVORS[ParseFlavor.at],
