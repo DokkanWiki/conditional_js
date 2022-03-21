@@ -13,10 +13,10 @@ const PARSE_FLAVORS = Object.fromEntries(Object.values(ParseFlavor).map(v => {
     return [
         v, {
             file_detect: mr(String.raw`^[^\S\r\n]*(?:\/\/|\/\*)[^\S\r\n]*@endif[^\S\r\n]*(?:\*\/)?$`),
-            define: mr(String.raw`^@define[^\S\r\n]+(\w+)(?:[^\S\r\n]+(.+))?$|^@define\(([^,]+)(?:,(.+))?\)$`),
-            if: mr(String.raw`^@if\((.+)\)$|^@if[^\S\r\n]+(.+?)$`),
+            define: mr(String.raw`^@define[^\S\r\n]+(\w+?)(?:[^\S\r\n]+(.+?))?$|^@define\(([\w\s]+?)(?:,([\S\s]+?))?\)$`),
+            if: mr(String.raw`^@if\(([\S\s]+?)\)$|^@if[^\S\r\n]+(.+?)$`),
             else: mr(String.raw`^@else$`),
-            elif: mr(String.raw`^@elif\((.+)\)$|^@elif[^\S\r\n]+(.+?)$`),
+            elif: mr(String.raw`^@elif\(([\S\s]+?)\)$|^@elif[^\S\r\n]+(.+?)$`),
             ifdef: mr(String.raw`^@ifdef\([^\S\r\n]*(\w+)[^\S\r\n]*\)$|^@ifdef[^\S\r\n]+(\w+?)$`),
             ifndef: mr(String.raw`^@ifndef\([^\S\r\n]*(\w+)[^\S\r\n]*\)$|^@ifndef[^\S\r\n]+(\w+?)$`),
             elifdef: mr(String.raw`^@elifdef\([^\S\r\n]*(\w+)[^\S\r\n]*\)$|^@elifdef[^\S\r\n]+(\w+?)$`),
