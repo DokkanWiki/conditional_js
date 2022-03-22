@@ -30,8 +30,6 @@ export class EvalExecutor implements Executor {
     }
 
     /**
-     * TODO: Pass definitions as named arguments instead of defining them in scope
-     *
      * @param {string} code
      * @param {string} source_filename
      * @param {number} source_line
@@ -39,17 +37,8 @@ export class EvalExecutor implements Executor {
      * @returns {Promise<any>}
      */
     public async exec(code: string, source_filename?: string, source_line?: number, source_column?: number): Promise<any> {
-        const lines = ['"use strict";'];
-        for (const [key, val] of this.defines.entries()) {
-            if (typeof val === 'string') {
-                lines.push(`var ${key} = ${JSON.stringify(val)};`);
-            } else {
-                lines.push(`var ${key} = ${val};`);
-            }
-        }
-        lines.push(`return (${code});`);
         try {
-            return Function(lines.join('\n'))();
+            return Function(...this.defines.keys(), `return (${code});`)(...this.defines.values());
         } catch (e) {
             throw new EvalError(`${e.message} at [${source_filename ?? 'anonymous'}:${source_line}:${source_column}]`);
         }

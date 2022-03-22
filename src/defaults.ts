@@ -1,9 +1,5 @@
 import {IConditionalJSLoaderOptions, ProcessAction} from './options';
 
-/**
- *  TODO: Modify parentheses versions to allow multiline expressions
- */
-
 export enum ParseFlavor {
     at = '@', hash = '#'
 }
