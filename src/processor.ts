@@ -74,10 +74,6 @@ export class ConditionalJsProcessor {
         await this.executor.newContext();
 
         for (const comment of ast.comments) {
-            /**
-             * TODO: Maybe split CommentBlock and process each line as a separate block.
-             *  This may allow multiple use of defines/undefines all in one comment block (or jsdoc block).
-             */
             const statement = this.statement_parser.parseString(
                 comment.value, {
                     filename: context.file_name,

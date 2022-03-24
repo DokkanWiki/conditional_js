@@ -80,7 +80,7 @@ describe.each([DEFAULT_OPTIONS.sandbox, false])(`test processor (sandbox: %s)`, 
         const {transformed_map} = await processor.process(source_test, file_context);
         expect(transformed_map).toEqual({
             'file': null,
-            'mappings': 'AAAA;AACA;AACA;AAEA;AAEA;AAMA;AAMA;AAEA;AACA;',
+            'mappings': 'AAAA;AACA;AACA;AAEA;AAEA;AAQA;AAMA;AAEA;AACA;',
             'names': [],
             'sources': ['test.js'],
             'sourcesContent': [source_test],
@@ -109,7 +109,9 @@ const source_test_template = `
 
 // @ifdef VERSION
 const a = %d + 1;
-// @elifdef VERSION2
+/* 
+    @elifdef(VERSION2)
+*/
 const a = %d + 2;
 // @elifndef VERSION3
 const a = %d + 3;

@@ -5,10 +5,6 @@ export enum ProcessAction {
     remove = 'remove', comment = 'comment'
 }
 
-/**
- * TODO: Maybe SandBoxOptions should also accept a Function instead to allow replacing with a custom eval
- * TODO: Maybe support a few popular eval-alternatives like Safe-Eval out of the box
- */
 export interface ISandboxOptions {
     memory_limit?: number,
     timeout?: number
