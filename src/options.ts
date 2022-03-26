@@ -33,7 +33,7 @@ export interface IParseOptions {
      */
     if: TParseMethodOption;
     /**
-     * Regex or function to detect and parse #ifdef. Must captucapture/returnre a single identifier.
+     * Regex or function to detect and parse #ifdef. Must capture/return a single identifier.
      */
     ifdef: TParseMethodOption;
     /**
@@ -64,9 +64,11 @@ export interface IParseOptions {
 
 export interface IConditionalJSLoaderOptions {
     /**
-     * Regular expressions used to parse conditional comment lines. Alternatively supply a key string for a set of default options.
+     * Regular expressions used to parse conditional comment lines. Alternatively supply a key string for a particular parse flavor.
      *
-     * Current supported defaults are
+     * Current supported flavors are:
+     *  - `at` for `@`
+     *  - `hash` for `#`
      */
     parser: IParseOptions | ParseFlavor;
     /**
@@ -76,7 +78,7 @@ export interface IConditionalJSLoaderOptions {
     /**
      * Global definitions used to execute conditional statements.
      */
-    defines?: {
+    definitions?: {
         [k: string]: any
     };
     /**
@@ -140,7 +142,7 @@ export interface INormalizedConditionalJSLoaderOptions {
     /**
      * Global definitions used to execute conditional statements.
      */
-    defines: {
+    definitions: {
         [k: string]: any
     };
     /**
@@ -204,7 +206,7 @@ export function normalizeOptions(options: IConditionalJSLoaderOptions): INormali
             endif: makeParserOption(parser_options.endif),
         },
         action: options.action,
-        defines: options.defines ?? {},
+        definitions: options.definitions ?? {},
         sandbox: sandbox_options,
     };
 }

@@ -27,9 +27,9 @@ export class ConditionalJsProcessor {
     constructor(options: IConditionalJSLoaderOptions) {
         this.options = normalizeOptions(options);
         if (typeof this.options.sandbox === 'undefined') {
-            this.executor = new EvalExecutor(Object.entries(this.options.defines));
+            this.executor = new EvalExecutor(Object.entries(this.options.definitions));
         } else {
-            this.executor = new IsolatedVmExecutor(Object.entries(this.options.defines), this.options.sandbox);
+            this.executor = new IsolatedVmExecutor(Object.entries(this.options.definitions), this.options.sandbox);
         }
         this.statement_parser = new StatementParser(this.options.parser);
     }

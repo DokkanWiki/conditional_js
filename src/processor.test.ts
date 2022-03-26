@@ -10,10 +10,6 @@ const getOptions = (sandbox: boolean | ISandboxOptions, action: ProcessAction = 
     return options;
 };
 
-/**
- * TODO: Add tests for multiline comment conditionals
- */
-
 describe.each([DEFAULT_OPTIONS.sandbox, false])(`test processor (sandbox: %s)`, (sandbox_options) => {
     const file_context = {
         file_name: 'test.js',

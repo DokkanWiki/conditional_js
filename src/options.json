@@ -1,0 +1,135 @@
+{
+    "title": "Conditional JS Loader Options",
+    "type": "object",
+    "additionalProperties": false,
+    "$defs": {
+        "TParseMethodOption": {
+            "anyOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "object",
+                    "instanceof": "RegExp"
+                },
+                {
+                    "type": "object",
+                    "instanceof": "Function"
+                }
+            ]
+        },
+        "TStringOrRegex": {
+            "anyOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "object",
+                    "instanceof": "RegExp"
+                }
+            ]
+        }
+    },
+    "properties": {
+        "parser": {
+            "description": "Regular expressions used to parse conditional comment lines. Alternatively supply a key string for a particular parse flavor. Current supported flavors are: `at` for `@` and `hash` for `#`",
+            "anyOf": [
+                {
+                    "type": "string",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "at",
+                            "hash"
+                        ]
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "file_detect": {
+                            "description": "Regex to detect if file has any conditionals to skip unnecessary parsing. No capture/return groups required.",
+                            "$ref": "#/$defs/TStringOrRegex"
+                        },
+                        "define": {
+                            "description": "Regex or function to detect and parse #define. Must capture/return a single identifier; additionally capture/return optional assignment expression.",
+                            "$ref": "#/$defs/TParseMethodOption"
+                        },
+                        "if": {
+                            "description": "Regex or function to detect and parse #if. Must have 1 capture capture/return.",
+                            "$ref": "#/$defs/TParseMethodOption"
+                        },
+                        "ifdef": {
+                            "description": "Regex or function to detect and parse #ifdef. Must capture/return a single identifier.",
+                            "$ref": "#/$defs/TParseMethodOption"
+                        },
+                        "ifndef": {
+                            "description": "Regex or function to detect and parse #ifndef. Must capture/return a single identifier.",
+                            "$ref": "#/$defs/TParseMethodOption"
+                        },
+                        "elif": {
+                            "description": "Regex or function to detect and parse #elif. Must have 1 capture/return group.",
+                            "$ref": "#/$defs/TParseMethodOption"
+                        },
+                        "else": {
+                            "description": "Regex or function to detect and parse #else. No capture/return groups required.",
+                            "$ref": "#/$defs/TParseMethodOption"
+                        },
+                        "elifdef": {
+                            "description": "Regex or function to detect and parse #elifdef. Must capture/return a single identifier.",
+                            "$ref": "#/$defs/TParseMethodOption"
+                        },
+                        "elifndef": {
+                            "description": "Regex or function to detect and parse #elifndef. Must capture/return a single identifier.",
+                            "$ref": "#/$defs/TParseMethodOption"
+                        },
+                        "endif": {
+                            "description": "Regex or function to detect and parse #endif. No capture/return groups required.",
+                            "$ref": "#/$defs/TParseMethodOption"
+                        }
+                    }
+                }
+            ]
+        },
+        "action": {
+            "description": "Action to perform on blocks removed by the conditional pre-processing.",
+            "type": "string",
+            "default": "remove",
+            "items": {
+                "type": "string",
+                "enum": [
+                    "remove",
+                    "comment"
+                ]
+            }
+        },
+        "definitions": {
+            "description": "Global definitions used to execute conditional statements.",
+            "type": "object"
+        },
+        "sandbox": {
+            "description": "Execute conditional code expressions in `isolate-vm`. Pass `false` to use standard `eval()`. Pass `true` to use default.",
+            "anyOf": [
+                {
+                    "type": "boolean"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "memory_limit": {
+                            "type": "number",
+                            "default": 128,
+                            "description": "Memory limit of JavaScript virtual machine in MB."
+                        },
+                        "timeout": {
+                            "type": "number",
+                            "description": "Conditional script execution timeout in milliseconds.",
+                            "default": 10000
+                        }
+                    }
+                }
+            ],
+            "default": true
+        }
+    }
+}

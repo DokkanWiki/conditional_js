@@ -39,18 +39,18 @@ test('option unknown normalize', () => {
 
 test('option empty defines', () => {
     const options = getOptions();
-    options.defines = undefined;
+    options.definitions = undefined;
     const default_options = normalizeOptions(options);
-    expect(default_options.defines).toStrictEqual({});
+    expect(default_options.definitions).toStrictEqual({});
 });
 
 test('option set defines', () => {
     const options = getOptions();
-    options.defines = {
+    options.definitions = {
         'global': 'value',
     };
     const default_options = normalizeOptions(options);
-    expect(default_options.defines).toStrictEqual({
+    expect(default_options.definitions).toStrictEqual({
         'global': 'value',
     });
 });

@@ -4,12 +4,13 @@ import {ConditionalJsProcessor, IFileContext} from './processor';
 import {RawSourceMap} from 'source-map';
 import {Optional} from './utils';
 import {DEFAULT_OPTIONS} from './defaults';
+import * as OptionsSchema from './options.json';
+import {JSONSchema7} from 'json-schema';
 
 export const ConditionalJsLoader: LoaderDefinitionFunction<IConditionalJSLoaderOptions> = function (content, map, meta) {
     const loader_context = this;
 
-    // TODO: Options schema
-    const options = Object.assign({}, DEFAULT_OPTIONS, loader_context.getOptions());
+    const options = Object.assign({}, DEFAULT_OPTIONS, loader_context.getOptions(OptionsSchema as JSONSchema7));
 
     const callback = loader_context.async();
 
