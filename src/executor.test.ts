@@ -34,7 +34,7 @@ describe.each(executors)('test $executor.name', ({executor}) => {
 
         test('define a=true; eval a = true', async () => {
             const executor = buildExecutor();
-            await executor.addDefine('a', true);
+            await executor.addDefinition('a', true);
             expect(await executor.exec('a')).toBe(true);
             executor.release();
         });
@@ -47,7 +47,7 @@ describe.each(executors)('test $executor.name', ({executor}) => {
 
         test('define a=() => true; eval a() = true', async () => {
             const executor = buildExecutor();
-            await executor.addDefine('a', () => true);
+            await executor.addDefinition('a', () => true);
             expect(await executor.exec('a()')).toBe(true);
             executor.release();
         });
@@ -63,8 +63,8 @@ describe.each(executors)('test $executor.name', ({executor}) => {
 
         test('define a=true, b=false; eval a && b = false', async () => {
             const executor = buildExecutor();
-            await executor.addDefine('a', true);
-            await executor.addDefine('b', false);
+            await executor.addDefinition('a', true);
+            await executor.addDefinition('b', false);
             expect(await executor.exec('a && b')).toBe(false);
             executor.release();
         });
@@ -77,8 +77,8 @@ describe.each(executors)('test $executor.name', ({executor}) => {
 
         test('define a=() => true, b=false; eval a() && b = false', async () => {
             const executor = buildExecutor();
-            await executor.addDefine('a', () => true);
-            await executor.addDefine('b', false);
+            await executor.addDefinition('a', () => true);
+            await executor.addDefinition('b', false);
             expect(await executor.exec('a() && b')).toBe(false);
             executor.release();
         });
@@ -102,7 +102,7 @@ describe.each(executors)('test $executor.name', ({executor}) => {
 
         test('define a=5; eval a + 5 = 10', async () => {
             const executor = buildExecutor();
-            await executor.addDefine('a', 5);
+            await executor.addDefinition('a', 5);
             expect(await executor.exec('a + 5')).toBe(10);
             executor.release();
         });
@@ -115,7 +115,7 @@ describe.each(executors)('test $executor.name', ({executor}) => {
 
         test('define a=() => 5; eval a() + 5 = 10', async () => {
             const executor = buildExecutor();
-            await executor.addDefine('a', () => 5);
+            await executor.addDefinition('a', () => 5);
             expect(await executor.exec('a() + 5')).toBe(10);
             executor.release();
         });
@@ -140,7 +140,7 @@ describe.each(executors)('test $executor.name', ({executor}) => {
 
         test('define a="a"; eval a + "b" = "ab"', async () => {
             const executor = buildExecutor();
-            await executor.addDefine('a', 'a');
+            await executor.addDefinition('a', 'a');
             expect(await executor.exec('a + "b"')).toBe('ab');
             executor.release();
         });
@@ -153,7 +153,7 @@ describe.each(executors)('test $executor.name', ({executor}) => {
 
         test('define a=() => "a"; eval a() + "b" = "ab"', async () => {
             const executor = buildExecutor();
-            await executor.addDefine('a', () => 'a');
+            await executor.addDefinition('a', () => 'a');
             expect(await executor.exec('a() + "b"')).toBe('ab');
             executor.release();
         });
@@ -163,7 +163,7 @@ describe.each(executors)('test $executor.name', ({executor}) => {
     test('reset context should clear defines', async () => {
         expect.assertions(2);
         const executor = buildExecutor();
-        await executor.addDefine('a', () => 'a');
+        await executor.addDefinition('a', () => 'a');
         expect(await executor.exec('a() + "b"')).toBe('ab');
         await executor.newContext();
         try {

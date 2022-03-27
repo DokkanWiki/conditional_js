@@ -18,6 +18,8 @@ const PARSE_FLAVORS = Object.fromEntries(Object.values(ParseFlavor).map(v => {
             elifdef: mr(String.raw`^@elifdef\([^\S\r\n]*(\w+)[^\S\r\n]*\)$|^@elifdef[^\S\r\n]+(\w+?)$`),
             elifndef: mr(String.raw`^@elifndef\([^\S\r\n]*(\w+)[^\S\r\n]*\)$|^@elifndef[^\S\r\n]+(\w+?)$`),
             endif: mr(String.raw`^@endif$`),
+            undef: mr(String.raw`^@undef\([^\S\r\n]*(\w+)[^\S\r\n]*\)$|^@undef[^\S\r\n]+(\w+?)$`),
+            error: mr(String.raw`^@error\(([\S\s]+?)\)$|^@error[^\S\r\n]+(.+?)$`),
         },
     ];
 }));

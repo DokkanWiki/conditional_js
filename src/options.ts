@@ -60,6 +60,14 @@ export interface IParseOptions {
      * Regex or function to detect and parse #endif. No capture/return groups required.
      */
     endif: TParseMethodOption;
+    /**
+     * Regex or function to detect and parse #undef. Much capture/return a single identifier
+     */
+    undef: TParseMethodOption;
+    /**
+     * Regex or function to detect and parse #error. Must have 1 capture/return group.
+     */
+    error: TParseMethodOption;
 }
 
 export interface IConditionalJSLoaderOptions {
@@ -121,13 +129,21 @@ export interface INormalizedParseOptions {
      */
     elifdef: TParseMethod;
     /**
-     * Regex to detect and parse #elifndef. Must return a single identifier.
+     * Function to detect and parse #elifndef. Must return a single identifier.
      */
     elifndef: TParseMethod;
     /**
-     * Regex to detect and parse #endif.
+     * Function to detect and parse #endif.
      */
     endif: TParseMethod;
+    /**
+     * Function to detect and parse #undef. Must return a single identifier.
+     */
+    undef: TParseMethod;
+    /**
+     * Function to detect and parse #error. Must return a single string expression.
+     */
+    error: TParseMethod;
 }
 
 export interface INormalizedConditionalJSLoaderOptions {
@@ -204,6 +220,8 @@ export function normalizeOptions(options: IConditionalJSLoaderOptions): INormali
             elifdef: makeParserOption(parser_options.elifdef),
             elifndef: makeParserOption(parser_options.elifndef),
             endif: makeParserOption(parser_options.endif),
+            undef: makeParserOption(parser_options.undef),
+            error: makeParserOption(parser_options.error),
         },
         action: options.action,
         definitions: options.definitions ?? {},
