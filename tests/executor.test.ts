@@ -1,4 +1,4 @@
-import {EvalExecutor, IsolatedVmExecutor} from './executor';
+import {EvalExecutor, IsolatedVmExecutor} from '../src/executor';
 
 const executors = [
     {executor: EvalExecutor}, {executor: IsolatedVmExecutor},
@@ -185,6 +185,21 @@ describe.each(executors)('test $executor.name', ({executor}) => {
             );
         } catch (e) {
             expect(e.toString()).toMatch(/^(EvalError: |SyntaxError: )?Unexpected identifier (at )?\[executor.test.js:181:3[4|6]]$/);
+        }
+        executor.release();
+    });
+
+    test('removing a definition', async () => {
+        expect.assertions(2);
+        const executor = buildExecutor();
+        await executor.removeDefinition('a');
+        await executor.addDefinition('a', () => 'a');
+        expect(await executor.exec('a() + "b"')).toBe('ab');
+        await executor.removeDefinition('a');
+        try {
+            await executor.exec('a() + "b"');
+        } catch (e) {
+            expect(e.toString()).toMatch('a is not defined');
         }
         executor.release();
     });

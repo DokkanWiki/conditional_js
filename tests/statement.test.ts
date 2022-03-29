@@ -1,8 +1,8 @@
-import {DEFAULT_OPTIONS} from './defaults';
-import {normalizeOptions, ISandboxOptions} from './options';
-import {IsolatedVmExecutor} from './executor';
-import {StatementParser} from './statement_parser';
-import {StatementLocation} from './statement';
+import {DEFAULT_OPTIONS} from '../src/defaults';
+import {ISandboxOptions, normalizeOptions} from '../src/options';
+import {IsolatedVmExecutor} from '../src/executor';
+import {StatementParser} from '../src/statement_parser';
+import {StatementLocation} from '../src/statement';
 
 const default_options = normalizeOptions(DEFAULT_OPTIONS);
 
@@ -173,4 +173,40 @@ test('failed conditional with error location', async () => {
     const test_stmt = parser.parseString('@if .== 7', location);
     expect(test_stmt).toBeTruthy();
     await expect(test_stmt?.execute(executor)).rejects.toThrowError(`Unexpected token '.' [test.js:${location.line}:${location.column}]`);
+});
+
+test('execute undef', async () => {
+    await executor.newContext();
+    const parser = new StatementParser(default_options.parser);
+    const define_stmt = parser.parseString('@define identifier 6');
+    const undef_stmt = parser.parseString('@undef identifier');
+    const test_stmt = parser.parseString('@elif identifier === 6');
+    expect(define_stmt).toBeTruthy();
+    expect(undef_stmt).toBeTruthy();
+    expect(test_stmt).toBeTruthy();
+    expect(await define_stmt?.execute(executor)).toBeUndefined();
+    expect(await test_stmt?.execute(executor)).toBe(true);
+    expect(await undef_stmt?.execute(executor)).toBeUndefined();
+    await expect(test_stmt?.execute(executor)).rejects.toThrow('identifier is not defined');
+});
+
+test('error directive', async () => {
+    await executor.newContext();
+    const parser = new StatementParser(default_options.parser);
+    const test_stmt = parser.parseString('@error message test');
+    expect(test_stmt).toBeTruthy();
+    await expect(test_stmt?.execute(executor)).rejects.toThrowError(`Error directive: message test at [anonymous::]`);
+});
+
+test('error directive with error location', async () => {
+    await executor.newContext();
+    const parser = new StatementParser(default_options.parser);
+    const location: StatementLocation = {
+        filename: 'test.js',
+        line: Math.ceil(Math.random() * 100),
+        column: Math.ceil(Math.random() * 100),
+    };
+    const test_stmt = parser.parseString('@error message test', location);
+    expect(test_stmt).toBeTruthy();
+    await expect(test_stmt?.execute(executor)).rejects.toThrowError(`Error directive: message test at [test.js:${location.line}:${location.column}]`);
 });

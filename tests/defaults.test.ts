@@ -1,4 +1,4 @@
-import {PARSE_FLAVORS, ParseFlavor} from './defaults';
+import {PARSE_FLAVORS, ParseFlavor} from '../src/defaults';
 
 const AT_FLAVOR = PARSE_FLAVORS[ParseFlavor.at];
 

@@ -1,7 +1,7 @@
-import {StatementLocation, StatementType} from './statement';
-import {DEFAULT_OPTIONS} from './defaults';
-import {normalizeOptions} from './options';
-import {StatementParser} from './statement_parser';
+import {StatementLocation, StatementType} from '../src/statement';
+import {DEFAULT_OPTIONS} from '../src/defaults';
+import {normalizeOptions} from '../src/options';
+import {StatementParser} from '../src/statement_parser';
 
 const default_options = normalizeOptions(DEFAULT_OPTIONS);
 

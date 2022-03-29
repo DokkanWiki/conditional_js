@@ -46,7 +46,7 @@ export class EvalExecutor implements Executor {
         try {
             return Function(...this.definitions.keys(), `return (${code});`)(...this.definitions.values());
         } catch (e) {
-            throw new EvalError(`${e.message} at [${source_filename ?? 'anonymous'}:${source_line}:${source_column}]`);
+            throw new EvalError(`${e.message} at [${source_filename ?? 'anonymous'}:${source_line ?? ''}:${source_column ?? ''}]`);
         }
     }
 

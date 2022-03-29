@@ -1,6 +1,6 @@
-import {DEFAULT_OPTIONS, ParseFlavor} from './defaults';
-import {normalizeOptions} from './options';
-import {structuredClone} from './utils';
+import {DEFAULT_OPTIONS, ParseFlavor} from '../src/defaults';
+import {normalizeOptions} from '../src/options';
+import {structuredClone} from '../src/utils';
 
 const getOptions = () => structuredClone(DEFAULT_OPTIONS);
 

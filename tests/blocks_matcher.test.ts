@@ -1,4 +1,4 @@
-import {BlocksMatcher} from './blocks_matcher';
+import {BlocksMatcher} from '../src/blocks_matcher';
 import {Comment} from '@babel/types';
 import {parse} from '@babel/parser';
 

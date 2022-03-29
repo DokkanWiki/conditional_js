@@ -47,7 +47,7 @@ export class Statement {
             await executor.removeDefinition(this.params[0]);
             this.value = undefined;
         } else if (this.type === StatementType.error) {
-            throw new EvalError(`Error directive: ${this.params[0]} at [${this.location?.filename ?? 'anonymous'}:${this.location?.line}:${this.location?.column}]`);
+            throw new EvalError(`Error directive: ${this.params[0]} at [${this.location?.filename ?? 'anonymous'}:${this.location?.line ?? ''}:${this.location?.column ?? ''}]`);
         } else if (STATEMENT_TEST_TYPES.includes(this.type)) {
             const code = `typeof ${this.params[0]} !== 'undefined'`;
             let result = !!await executor.exec(code);

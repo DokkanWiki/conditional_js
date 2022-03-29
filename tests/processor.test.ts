@@ -1,7 +1,7 @@
-import {DEFAULT_OPTIONS} from './defaults';
-import {ISandboxOptions, ProcessAction} from './options';
-import {ConditionalJsProcessor} from './processor';
-import {structuredClone} from './utils';
+import {DEFAULT_OPTIONS} from '../src/defaults';
+import {ISandboxOptions, ProcessAction} from '../src/options';
+import {ConditionalJsProcessor} from '../src/processor';
+import {structuredClone} from '../src/utils';
 
 const getOptions = (sandbox: boolean | ISandboxOptions, action: ProcessAction = ProcessAction.remove) => {
     const options = structuredClone(DEFAULT_OPTIONS);
