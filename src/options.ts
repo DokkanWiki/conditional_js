@@ -1,5 +1,5 @@
 import {Optional} from './utils';
-import {ParseFlavor, PARSE_FLAVORS} from './defaults';
+import {DEFAULT_OPTIONS, PARSE_FLAVORS, ParseFlavor} from './defaults';
 
 export enum ProcessAction {
     remove = 'remove', comment = 'comment'
@@ -78,11 +78,11 @@ export interface IConditionalJSLoaderOptions {
      *  - `at` for `@`
      *  - `hash` for `#`
      */
-    parser: IParseOptions | ParseFlavor;
+    parser?: IParseOptions | ParseFlavor;
     /**
      * Action to perform on blocks removed by the conditional pre-processing.
      */
-    action: ProcessAction;
+    action?: ProcessAction;
     /**
      * Global definitions used to execute conditional statements.
      */
@@ -92,7 +92,7 @@ export interface IConditionalJSLoaderOptions {
     /**
      * Execute conditional code expressions in `isolate-vm`.
      */
-    sandbox: boolean | ISandboxOptions;
+    sandbox?: boolean | ISandboxOptions;
 }
 
 export interface INormalizedParseOptions {
@@ -177,7 +177,7 @@ const makeRegexParseFn = (re: RegExp) => {
     };
 };
 
-export function normalizeOptions(options: IConditionalJSLoaderOptions): INormalizedConditionalJSLoaderOptions {
+export function normalizeOptions(options?: IConditionalJSLoaderOptions): INormalizedConditionalJSLoaderOptions {
 
     const makeParserOption = (opt: TParseMethodOption): TParseMethod => {
         if (typeof opt === 'string') {
@@ -191,6 +191,10 @@ export function normalizeOptions(options: IConditionalJSLoaderOptions): INormali
         }
         throw new Error(`Invalid parsing option: expected string, RegExp, or function`);
     };
+
+    if (typeof options === 'undefined') {
+        options = DEFAULT_OPTIONS;
+    }
 
     let sandbox_options: Optional<ISandboxOptions> = {
         memory_limit: 128,
@@ -206,7 +210,14 @@ export function normalizeOptions(options: IConditionalJSLoaderOptions): INormali
         sandbox_options.timeout = options.sandbox.timeout;
     }
 
-    const parser_options = typeof options.parser === 'string' ? PARSE_FLAVORS[options.parser] : options.parser;
+    let parser_options: IParseOptions;
+    if (typeof options.parser === 'undefined') {
+        parser_options = PARSE_FLAVORS[ParseFlavor.at];
+    } else if (typeof options.parser === 'string') {
+        parser_options = PARSE_FLAVORS[options.parser];
+    } else {
+        parser_options = options.parser;
+    }
 
     return {
         parser: {
@@ -223,7 +234,7 @@ export function normalizeOptions(options: IConditionalJSLoaderOptions): INormali
             undef: makeParserOption(parser_options.undef),
             error: makeParserOption(parser_options.error),
         },
-        action: options.action,
+        action: options.action ?? ProcessAction.remove,
         definitions: options.definitions ?? {},
         sandbox: sandbox_options,
     };

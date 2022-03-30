@@ -12,7 +12,12 @@ export class StatementParser {
     public parseString(s: string, location?: StatementLocation): Optional<Statement> {
         let matches;
 
-        s = s.trim();
+        s = s
+        .split(/[\r\n]|\r\n/)
+        .map(l => l.trim())
+        .map(l => l.replace(/^\*+/, ''))
+        .join('\n')
+        .trim();
 
         if ((matches = this.parser_options.define(s)) !== undefined) {
             return new Statement(StatementType.define, matches.slice(1).map(m => m.trim()), location);

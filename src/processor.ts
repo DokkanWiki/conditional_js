@@ -1,5 +1,5 @@
 import {RawSourceMap} from 'source-map';
-import {INormalizedConditionalJSLoaderOptions, IConditionalJSLoaderOptions, normalizeOptions, ProcessAction} from './options';
+import {IConditionalJSLoaderOptions, INormalizedConditionalJSLoaderOptions, normalizeOptions, ProcessAction} from './options';
 import {Optional} from './utils';
 import {parse, ParseResult} from '@babel/parser';
 import MagicString from 'magic-string';
@@ -24,7 +24,7 @@ export class ConditionalJsProcessor {
     private readonly executor: Executor;
     private statement_parser: StatementParser;
 
-    constructor(options: IConditionalJSLoaderOptions) {
+    constructor(options?: IConditionalJSLoaderOptions) {
         this.options = normalizeOptions(options);
         if (typeof this.options.sandbox === 'undefined') {
             this.executor = new EvalExecutor(Object.entries(this.options.definitions));
@@ -94,6 +94,16 @@ export class ConditionalJsProcessor {
             } else if (statement.type === StatementType.endif) {
                 blocks.close(comment);
                 continue;
+            } else if (blocks.current_block && !blocks.current_block.active) {
+                if (statement.type === StatementType.error) {
+                    continue;
+                }
+                if (statement.type === StatementType.define) {
+                    continue;
+                }
+                if (statement.type === StatementType.undef) {
+                    continue;
+                }
             }
 
             const statement_result = await statement.execute(this.executor);
