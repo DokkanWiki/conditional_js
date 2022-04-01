@@ -1,8 +1,8 @@
-import {DEFAULT_OPTIONS} from '../src/defaults';
-import {ISandboxOptions, normalizeOptions} from '../src/options';
-import {IsolatedVmExecutor} from '../src/executor';
-import {StatementParser} from '../src/statement_parser';
-import {StatementLocation} from '../src/statement';
+import {DEFAULT_OPTIONS} from '../../src/defaults';
+import {ISandboxOptions, normalizeOptions} from '../../src/options';
+import {IsolatedVmExecutor} from '../../src/executor';
+import {StatementParser} from '../../src/statement_parser';
+import {StatementLocation} from '../../src/statement';
 
 const default_options = normalizeOptions(DEFAULT_OPTIONS);
 

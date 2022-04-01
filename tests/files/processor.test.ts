@@ -1,7 +1,7 @@
-import {DEFAULT_OPTIONS} from '../src/defaults';
-import {ISandboxOptions, ProcessAction} from '../src/options';
-import {ConditionalJsProcessor} from '../src/processor';
-import {structuredClone} from '../src/utils';
+import {DEFAULT_OPTIONS, DEFAULT_SANDBOX_OPTIONS} from '../../src/defaults';
+import {ISandboxOptions, ProcessAction} from '../../src/options';
+import {ConditionalJsProcessor} from '../../src';
+import {structuredClone} from '../../src/utils';
 
 const getOptions = (sandbox: boolean | ISandboxOptions, action: ProcessAction = ProcessAction.remove) => {
     const options = structuredClone(DEFAULT_OPTIONS);
@@ -10,7 +10,7 @@ const getOptions = (sandbox: boolean | ISandboxOptions, action: ProcessAction = 
     return options;
 };
 
-describe.each([DEFAULT_OPTIONS.sandbox, false])(`test processor (sandbox: %s)`, (sandbox_options) => {
+describe.each([DEFAULT_SANDBOX_OPTIONS, false])(`test processor (sandbox: %s)`, (sandbox_options) => {
     const file_context = {
         file_name: 'test.js',
     };
@@ -94,6 +94,22 @@ describe.each([DEFAULT_OPTIONS.sandbox, false])(`test processor (sandbox: %s)`, 
         const processor = new ConditionalJsProcessor(options);
         const {transformed_source} = await processor.process(source_test, file_context);
         expect(transformed_source).toBe(source_test);
+        processor.release();
+    });
+    test('test inactive undef', async () => {
+        const source_test = `
+            // @define PRODUCTION 55
+            // @ifdef NOT_DEFINED
+            //    @undef PRODUCTION
+            // @endif
+            // @if PRODUCTION === 55
+            "test"
+            // @endif
+        `;
+        const options = getOptions(sandbox_options);
+        const processor = new ConditionalJsProcessor(options);
+        const {transformed_source} = await processor.process(source_test, file_context);
+        expect(transformed_source).toContain("test");
         processor.release();
     });
 });

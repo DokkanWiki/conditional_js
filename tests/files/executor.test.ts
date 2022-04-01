@@ -1,4 +1,4 @@
-import {EvalExecutor, IsolatedVmExecutor} from '../src/executor';
+import {EvalExecutor, IsolatedVmExecutor} from '../../src/executor';
 
 const executors = [
     {executor: EvalExecutor}, {executor: IsolatedVmExecutor},

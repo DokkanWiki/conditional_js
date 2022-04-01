@@ -1,5 +1,5 @@
-import {DEFAULT_OPTIONS} from '../src/defaults';
-import {ConditionalJsLoader} from '../src/loader';
+import {DEFAULT_OPTIONS} from '../../src/defaults';
+import {ConditionalJsLoader} from '../../src/loader';
 
 test('test loader success', done => {
     const callback = (err?: any, content?: any, sourceMap?: any, additionalData?: any) => {

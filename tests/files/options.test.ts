@@ -1,11 +1,11 @@
-import {DEFAULT_OPTIONS, ParseFlavor} from '../src/defaults';
-import {normalizeOptions} from '../src/options';
-import {structuredClone} from '../src/utils';
+import {DEFAULT_OPTIONS, ParseFlavor} from '../../src/defaults';
+import {normalizeOptions} from '../../src/options';
+import {structuredClone} from '../../src/utils';
 
 const getOptions = () => structuredClone(DEFAULT_OPTIONS);
 
 test('default option normalize', () => {
-    const default_options = normalizeOptions(getOptions());
+    const default_options = normalizeOptions();
     expect(typeof default_options.parser.if === 'function').toBe(true);
 });
 
