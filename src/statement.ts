@@ -1,5 +1,6 @@
 import {Executor} from './executor';
 import {Optional} from './utils';
+import {RawSourceMap, SourceMapConsumer} from 'source-map';
 
 export enum StatementType {
     define, if, else, elif,
@@ -21,7 +22,8 @@ export const STATEMENT_TEST_NEGATE_TYPES = [
 export interface StatementLocation {
     filename?: string,
     line?: number,
-    column?: number
+    column?: number,
+    map?: string | RawSourceMap
 }
 
 export class Statement {
@@ -34,6 +36,19 @@ export class Statement {
         this.type = type;
         this.params = params;
         this.location = location;
+    }
+
+    async updateLocation() {
+        if (this.location?.map && this.location.line) {
+            const smc = await new SourceMapConsumer(this.location.map);
+            const {source, line, column} = smc.originalPositionFor({
+                line: this.location.line,
+                column: this.location.column || 0
+            });
+            this.location.filename = source || this.location.filename;
+            this.location.line = line || this.location.line;
+            this.location.column = column || this.location.column;
+        }
     }
 
     async execute(executor: Executor): Promise<Optional<boolean>> {

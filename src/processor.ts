@@ -7,6 +7,8 @@ import {BlocksMatcher} from './blocks_matcher';
 import {EvalExecutor, Executor, IsolatedVmExecutor} from './executor';
 import {StatementType} from './statement';
 import {StatementParser} from './statement_parser';
+// @ts-ignore
+import * as merge from 'merge-source-map';
 
 export interface ProcessResult {
     transformed_source: string;
@@ -50,11 +52,6 @@ export class ConditionalJsProcessor {
         const ast: ParseResult<import('@babel/types').File> = parse(source, {
             sourceType: 'unambiguous',
             sourceFilename: context.file_name,
-            allowImportExportEverywhere: true,
-            allowAwaitOutsideFunction: true,
-            allowReturnOutsideFunction: true,
-            allowSuperOutsideMethod: true,
-            allowUndeclaredExports: true,
             errorRecovery: true,
             strictMode: false,
         });
@@ -79,6 +76,7 @@ export class ConditionalJsProcessor {
                     filename: context.file_name,
                     line: comment.loc.start.line,
                     column: comment.loc.start.column,
+                    map: context.source_map
                 },
             );
 
@@ -105,6 +103,8 @@ export class ConditionalJsProcessor {
                     continue;
                 }
             }
+
+            await statement.updateLocation();
 
             const statement_result = await statement.execute(this.executor);
 
@@ -144,12 +144,22 @@ export class ConditionalJsProcessor {
             }
         }
 
+        let context_filename = context.file_name;
+        if (typeof context.source_map === 'object' && context.source_map.hasOwnProperty('file')) {
+            context_filename = context.source_map.file;
+        }
+        let transformed_map = s.generateMap({
+            source: context_filename,
+            includeContent: true,
+        });
+
+        if (context.source_map) {
+            transformed_map = merge(context.source_map, transformed_map);
+        }
+
         return {
             processor: this,
-            transformed_map: s.generateMap({
-                source: context.file_name,
-                includeContent: true,
-            }),
+            transformed_map,
             transformed_source: s.toString(),
         };
     }
