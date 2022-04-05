@@ -39,6 +39,7 @@ export class Statement {
     }
 
     async updateLocation() {
+        // TODO: Test missing location options
         if (this.location?.map && this.location.line) {
             const smc = await new SourceMapConsumer(this.location.map);
             const {source, line, column} = smc.originalPositionFor({
