@@ -76,8 +76,14 @@ test('Test flavor parsing', () => {
     const options = getOptions();
     options.parser = ParseFlavor.at;
     let default_options = normalizeOptions(options);
-    expect(default_options.parser.if('@if test')).toStrictEqual(['@if test', 'test']);
+    expect(default_options.parser.if('@if test')).toStrictEqual([
+        {index: 0, value: '@if test'},
+        {index: 0, value: 'test'},
+    ]);
     options.parser = ParseFlavor.hash;
     default_options = normalizeOptions(options);
-    expect(default_options.parser.if('#if test')).toStrictEqual(['#if test', 'test']);
+    expect(default_options.parser.if('#if test')).toStrictEqual([
+        {index: 0, value: '#if test'},
+        {index: 0, value: 'test'},
+    ]);
 });

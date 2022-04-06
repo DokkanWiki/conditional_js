@@ -5,4 +5,6 @@ module.exports = {
     collectCoverage: true,
     roots: ['<rootDir>/tests/'],
     setupFilesAfterEnv: ['jest-extended/all'],
+    testPathIgnorePatterns: ['/__utils__/'],
+    coveragePathIgnorePatterns: ['/__utils__/']
 };

@@ -10,12 +10,12 @@ export interface ISandboxOptions {
     timeout?: number
 }
 
-/**
- * @callback TParseMethod
- * @param  {string} line        - Line to parse
- * @return {string[]|undefined} - Array of identifiers or expression strings
- */
-export type TParseMethod = (line: string) => Optional<string[]>;
+export interface IParseMatch {
+    value: string,
+    index: number
+}
+
+export type TParseMethod = (line: string) => Optional<IParseMatch[]>;
 
 export type TParseMethodOption = string | RegExp | TParseMethod;
 
@@ -170,10 +170,16 @@ export interface INormalizedConditionalJSLoaderOptions {
 const makeRegexParseFn = (re: RegExp) => {
     return function (s: string) {
         const matches = re.exec(s);
-        if (matches === null) {
+        if (!matches) {
             return undefined;
         }
-        return matches.filter(Boolean);
+        /**
+         * TODO: fix index https://github.com/microsoft/TypeScript/issues/44227
+         *  minimum version for node becomes 16
+         */
+        return matches.filter(Boolean).map(m => {
+            return {value: m, index: 0}
+        });
     };
 };
 

@@ -2,6 +2,7 @@ import {DEFAULT_OPTIONS, DEFAULT_SANDBOX_OPTIONS} from '../../src/defaults';
 import {ISandboxOptions, ProcessAction} from '../../src/options';
 import {ConditionalJsProcessor} from '../../src';
 import {structuredClone} from '../../src/utils';
+import {locationOfStr, searchInMap} from '../__utils__/utils';
 
 const getOptions = (sandbox: boolean | ISandboxOptions, action: ProcessAction = ProcessAction.remove) => {
     const options = structuredClone(DEFAULT_OPTIONS);
@@ -73,15 +74,15 @@ describe.each([DEFAULT_SANDBOX_OPTIONS, false])(`test processor (sandbox: %s)`, 
         const processor = new ConditionalJsProcessor(
             getOptions(sandbox_options),
         );
-        const {transformed_map} = await processor.process(source_test, file_context);
-        expect(transformed_map).toEqual({
-            'file': null,
-            'mappings': 'AAAA;AACA;AACA;AAEA;AAEA;AAQA;AAMA;AAEA;AACA;',
-            'names': [],
-            'sources': ['test.js'],
-            'sourcesContent': [source_test],
-            'version': 3,
-        });
+        const look_for = 'const b = 3;';
+        const original_position = locationOfStr(source_test, look_for);
+        const cjs_result = await processor.process(source_test, file_context);
+        expect(await searchInMap(cjs_result, look_for)).toStrictEqual({
+            column: original_position.column,
+            line: original_position.line,
+            name: null,
+            source: file_context.file_name,
+        })
         processor.release();
     });
     test('test bad parser', async () => {

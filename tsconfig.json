@@ -13,6 +13,7 @@
         "strictNullChecks": true,
         "noImplicitAny": true,
         "removeComments": false,
+        "esModuleInterop": true,
         "lib": [
             "es6",
             "es7",

@@ -6,14 +6,14 @@ import {StatementParser} from '../../src/statement_parser';
 const default_options = normalizeOptions(DEFAULT_OPTIONS);
 
 describe.each([
-    ['@define identifier', StatementType.define, ['identifier']],
-    ['@if identifier', StatementType.if, ['identifier']],
-    ['@ifdef identifier', StatementType.ifdef, ['identifier']],
-    ['@ifndef identifier', StatementType.ifndef, ['identifier']],
+    ['@define identifier', StatementType.define, [{value: 'identifier', index: 0}]],
+    ['@if identifier', StatementType.if, [{value: 'identifier', index: 0}]],
+    ['@ifdef identifier', StatementType.ifdef, [{value: 'identifier', index: 0}]],
+    ['@ifndef identifier', StatementType.ifndef, [{value: 'identifier', index: 0}]],
     ['@else', StatementType.else, []],
-    ['@elif identifier', StatementType.elif, ['identifier']],
-    ['@elifdef identifier', StatementType.elifdef, ['identifier']],
-    ['@elifndef identifier', StatementType.elifndef, ['identifier']],
+    ['@elif identifier', StatementType.elif, [{value: 'identifier', index: 0}]],
+    ['@elifdef identifier', StatementType.elifdef, [{value: 'identifier', index: 0}]],
+    ['@elifndef identifier', StatementType.elifndef, [{value: 'identifier', index: 0}]],
     ['@endif', StatementType.endif, []],
 ])('%s', (line, result_type, result_params) => {
     test(`match [${result_type}, ${JSON.stringify(result_params)}`, async () => {

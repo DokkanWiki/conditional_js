@@ -4,6 +4,7 @@ import * as path from 'path';
 import 'jest-extended';
 // @ts-ignore
 import {parse as vueParse} from 'vue/compiler-sfc';
+import {locationOfStr, searchInMap} from './__utils__/utils';
 
 let sample_index = 0;
 while (fs.existsSync(path.resolve(__dirname, `./samples/${++sample_index}.input.js`))) {
@@ -35,10 +36,18 @@ test(`vue-loader combine source maps`, async () => {
     const cjs_result = await processor.process(vue_result.descriptor.script.content, {
         file_name: vue_result.descriptor.filename,
         // @ts-ignore
-        source_map: vue_result.descriptor.script.map
+        source_map: JSON.stringify(vue_result.descriptor.script.map),
     });
-    // TODO: Test source map by parsing and colocating
-    expect(cjs_result.transformed_map).toBeTruthy();
+    const search_for = `Updated Application Title`;
+
+    const original_position = locationOfStr(input_data, search_for);
+
+    expect(await searchInMap(cjs_result, search_for)).toStrictEqual({
+        column: original_position.column,
+        line: original_position.line,
+        name: null,
+        source: input_path,
+    });
 });
 
 test(`vue-loader proper error lines from prior source map`, async () => {
@@ -48,11 +57,14 @@ test(`vue-loader proper error lines from prior source map`, async () => {
         sourceMap: true,
         filename: input_path,
     });
+    const error_position = locationOfStr(input_data, '// @if 1 f== 1');
+
     const processor = new ConditionalJsProcessor();
+    // TODO: fix comment column position when typescript implements regex indicies
     // @ts-ignore
     await expect(processor.process(vue_result.descriptor.script.content, {
         file_name: vue_result.descriptor.filename,
         // @ts-ignore
-        source_map: vue_result.descriptor.script.map
-    })).rejects.toThrow(`Unexpected identifier [${input_path}:29:14]`);
+        source_map: vue_result.descriptor.script.map,
+    })).rejects.toThrow(`Unexpected identifier [${input_path}:${error_position.line}`);
 });

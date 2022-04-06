@@ -29,6 +29,7 @@
             // @ifdef TEST
             throw Error();
             // @endif
+            this.title = 'Updated Application Title';
         }
     }
 </script>

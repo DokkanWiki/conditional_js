@@ -1,25 +1,27 @@
 import {DEFAULT_OPTIONS} from '../../src/defaults';
 import {ConditionalJsLoader} from '../../src/loader';
+import {locationOfStr, searchInMap} from '../__utils__/utils';
 
 test('test loader success', done => {
-    const callback = (err?: any, content?: any, sourceMap?: any, additionalData?: any) => {
+    const test_file_name = 'test.js';
+    const callback = async (err?: any, content?: any, sourceMap?: any, additionalData?: any) => {
         expect(err).toBe(null);
         expect(content).toBe(source_test_result);
-        expect(sourceMap).toEqual({
-            "file": null,
-            "mappings": "AAAA;AACA;AACA;AAGA;AAEA;AAMA;AAEA;AAMA;AACA;",
-            "names": [],
-            "sources": [
-                "test.js"
-            ],
-            "sourcesContent": [source_test],
-            "version": 3
+        const lookup_str = 'const b = 1;';
+        const original_position = locationOfStr(source_test, lookup_str)
+        const cjs_result = {transformed_source: content, transformed_map: sourceMap};
+        // @ts-ignore
+        expect(await searchInMap(cjs_result, lookup_str)).toStrictEqual({
+            column: original_position.column,
+            line: original_position.line,
+            name: null,
+            source: test_file_name,
         });
         expect(additionalData).toBeUndefined();
         done();
     };
     ConditionalJsLoader.bind({
-        resourcePath: 'test.js',
+        resourcePath: test_file_name,
         getOptions() {
             return DEFAULT_OPTIONS;
         },

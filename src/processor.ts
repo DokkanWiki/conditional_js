@@ -7,8 +7,7 @@ import {BlocksMatcher} from './blocks_matcher';
 import {EvalExecutor, Executor, IsolatedVmExecutor} from './executor';
 import {StatementType} from './statement';
 import {StatementParser} from './statement_parser';
-// @ts-ignore
-import * as merge from 'merge-source-map';
+import {sourceMapMerge} from './sourcemap_merge';
 
 export interface ProcessResult {
     transformed_source: string;
@@ -76,7 +75,7 @@ export class ConditionalJsProcessor {
                     filename: context.file_name,
                     line: comment.loc.start.line,
                     column: comment.loc.start.column,
-                    map: context.source_map
+                    map: context.source_map,
                 },
             );
 
@@ -144,17 +143,25 @@ export class ConditionalJsProcessor {
             }
         }
 
-        let context_filename = context.file_name;
-        if (typeof context.source_map === 'object' && context.source_map.hasOwnProperty('file')) {
-            context_filename = context.source_map.file;
-        }
         let transformed_map = s.generateMap({
-            source: context_filename,
-            includeContent: true,
+            hires: true,
         });
+        if (typeof context.source_map === 'string') {
+            context.source_map = JSON.parse(context.source_map);
+        }
+        if (typeof context.source_map === 'object') {
+            transformed_map.file = context.source_map.file;
+            transformed_map.sources = context.source_map.sources;
+        } else {
+            if (context.file_name != null) {
+                transformed_map.file = context.file_name;
+                transformed_map.sources = [context.file_name];
+            }
+        }
 
         if (context.source_map) {
-            transformed_map = merge(context.source_map, transformed_map);
+            // @ts-ignore
+            transformed_map = sourceMapMerge(context.source_map, transformed_map);
         }
 
         return {
