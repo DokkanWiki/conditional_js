@@ -22,6 +22,22 @@ Includes a Webpack loader.
 - Can be used through the provided Webpack loader or as a standalone class
 - Supports multi-level sourcemap generation
 
+
+## Conditionals
+
+- `#define <IDENTIFIER> <VALUE?>`: add a definition for just one file. Does not nest into any imported/required files. If a `value` is not provided, the `identifier` will be set to `true`. The `value` can be a javascript expression.
+- `#undef <IDENTIFIER>`: remove a definition. Global definitions that are undefined are removed for that file only.
+- `#if <EXPRESSION>`: Start a block that will be removed if `expression` is falsy.
+- `#ifdef <IDENTIFIER>`: Start a block that will be removed if the `identifier` is not defined (no matter the value).
+- `#ifndef <IDENTIFIER>`: Start a block that will be removed if the `identifier` is defined (no matter the value).
+- `#else`: Start a sub-block that will be removed if another prior block is active.
+- `#elif <EXPRESSION>`: Start a sub-block that will be removed if the `expression` is falsy or a prior block is active.
+- `#elifdef <IDENTIFIER>`: Start a sub-block that will be removed if the `identifier` is not defined (no matter the value) or a prior block is active.
+- `#elifndef <IDENTIFIER>`: Start a sub-block that will be removed if the `identifier` is defined (no matter the value) or a prior block is active.
+- `#error <MESSAGE>`: Throw an error with `message` if allowed to execute or is in an active block.
+- `#endif`: Close a block
+
+
 ## Installation
 
 Install with a node package manager:
@@ -129,7 +145,34 @@ module: {
       - `processor`: `ConditionalJsProcessor` instance
   - `release()`
     - Clean up `isolated-vm` executor. No-op if not using a sandbox.
-    
+
+
+## Examples
+
+```javascript
+// @if NODE_ENV === 'production'
+//   @undef PERFORMANCE_STATS
+// @elif NODE_ENV === 'development'
+//   @define PERFORMANCE_STATS
+// @else
+//   @error NODE_ENV must be either 'production' or 'development'
+// @endif
+
+const render = function () {
+    // @ifdef PERFORMANCE_STATS
+    const t0 = performance.now();
+    // @endif
+
+    requestAnimationFrame(render);
+
+    renderer.render(scene, camera);
+
+    // @ifdef PERFORMANCE_STATS
+    const t1 = performance.now();
+    console.log(`Call to render() took ${t1 - t0} milliseconds.`);
+    // @endif
+};
+```
 
 ## License
 

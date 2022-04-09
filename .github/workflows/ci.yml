@@ -15,7 +15,18 @@ jobs:
                 uses: actions/setup-node@v3
                 with:
                     node-version: 'lts/*'
-                    cache: 'pnpm'
+            -   name: Cache dependencies
+                uses: actions/cache@v3
+                with:
+                    path: |
+                        ~/cache
+                        ~/.pnpm-store
+                    key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+                    restore-keys: |
+                        ${{ runner.os }}-
+            -   run: pnpm add node-gyp-cache
+            -   run: npm config set node_gyp node-gyp-cache
+            -   run: echo node_gyp = node-gyp-cache >> .npmrc
             -   run: pnpm install
             -   run: pnpm run test:ci
             -   uses: codecov/codecov-action@v2
