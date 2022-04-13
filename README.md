@@ -43,36 +43,39 @@ Includes a Webpack loader.
 Install with a node package manager:
 
 ```bash
-  npm install --only=production conditional-js
+  npm install @dokkanwiki/conditional_js
   
   # or
   
-  yarn add --production=true conditional-js
+  yarn add @dokkanwiki/conditional_js
   
   # or
   
-  pnpm add --prod conditional-js
+  pnpm add @dokkanwiki/conditional_js
 ```
 
 ## Webpack Loader Usage/Examples
 
 Webpack loader documentation: https://webpack.js.org/loaders/
 
-Within your webpack configuration, you'll need to add `ConditionalJsLoader` to the rules that are processing your JavaScript.
+Within your webpack configuration, you'll need to add `@dokkanwiki/conditional_js` to the rules that are processing your JavaScript.
 
 Process javascript files directly:
 
 ```javascript
-const ConditionalJsLoader = require("conditional-js").ConditionalJsLoader;
-
 module: {
     rules: [
         {
             test: /\.m?js$/,
             exclude: /node_modules/,
             use: {
-                loader: ConditionalJsLoader,
-                options: {}
+                loader: '@dokkanwiki/conditional_js',
+                options: {
+                    definitions: {
+                        DEBUG: true,
+                        NODE_ENV: process.env.NODE_ENV
+                    }
+                }
             }
         }
     ]
@@ -82,7 +85,6 @@ module: {
 Process before Babel:
 
 ```javascript
-const ConditionalJsLoader = require("conditional-js").ConditionalJsLoader;
 
 module: {
     rules: [
@@ -99,8 +101,10 @@ module: {
                     }
                 },
                 {
-                    loader: ConditionalJsLoader,
-                    options: {}
+                    loader: '@dokkanwiki/conditional_js',
+                    options: {
+                        DEBUG: process.env.NODE_ENV === 'development'
+                    }
                 }
             ]
         }
