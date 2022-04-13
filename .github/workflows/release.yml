@@ -31,6 +31,11 @@ jobs:
             -   run: echo node_gyp = node-gyp-cache >> .npmrc
             -   run: pnpm install
             -   run: pnpm run build
+            -   name: Publish
+                uses: JS-DevTools/npm-publish@v1
+                with:
+                    access: publish
+                    token: ${{ secrets.NPM_TOKEN }}
             -   run: zip -r 'conditional_js-${{github.ref_name}}.zip' dist LICENSE package.json README.md
             -   run: tar -czvf 'conditional_js-${{github.ref_name}}.tgz' dist LICENSE package.json README.md
             -   name: Release
@@ -39,7 +44,3 @@ jobs:
                     files: |
                         'conditional_js-${{github.ref_name}}.zip'
                         'conditional_js-${{github.ref_name}}.tgz'
-            -   name: Publish
-                uses: JS-DevTools/npm-publish@v1
-                with:
-                    token: ${{ secrets.NPM_TOKEN }}
