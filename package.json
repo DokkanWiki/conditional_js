@@ -1,6 +1,6 @@
 {
     "name": "conditional_js",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "description": "C++ style preprocessing conditionals for JavaScript and Webpack",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
