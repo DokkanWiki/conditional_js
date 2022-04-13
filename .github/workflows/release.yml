@@ -34,7 +34,7 @@ jobs:
             -   name: Publish
                 uses: JS-DevTools/npm-publish@v1
                 with:
-                    access: publish
+                    access: public
                     token: ${{ secrets.NPM_TOKEN }}
             -   run: zip -r 'conditional_js-${{github.ref_name}}.zip' dist LICENSE package.json README.md
             -   run: tar -czvf 'conditional_js-${{github.ref_name}}.tgz' dist LICENSE package.json README.md
