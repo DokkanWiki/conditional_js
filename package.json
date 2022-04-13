@@ -1,6 +1,6 @@
 {
     "name": "@dokkanwiki/conditional_js",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "C++ style preprocessing conditionals for JavaScript and Webpack",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
