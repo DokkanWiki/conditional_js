@@ -24,7 +24,7 @@
         "cpp"
     ],
     "repository": {
-        "url": "github:DokkanWiki/conditional-js"
+        "url": "github:DokkanWiki/conditional_js"
     },
     "author": "DokkanWiki <contact@dokkan.wiki>",
     "license": "MIT",
